@@ -2,6 +2,8 @@ package uk.nhs.adaptors.scr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.ACCEPTED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.HttpStatus.OK;
 
 import static io.restassured.RestAssured.given;
@@ -17,6 +19,7 @@ import uk.nhs.adaptors.scr.clients.SpineClient;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class SpineMockServiceTest {
+    private static final String SETUP_ENDPOINT = "/setup";
     private static final String HEALTHCHECK_ENDPOINT = "/healthcheck";
     private static final int PORT = 8081;
 
@@ -34,9 +37,20 @@ public class SpineMockServiceTest {
     }
 
     @Test
-    public void getHealthcheckMessageShouldReturnExpectedValue() {
-        String messageFromSpineService = spineClient.getHealthcheckMessage();
+    public void sampleEndpointShouldReturnMockedData() {
+        String sampleJson = "{\"sample\":\"ok\"}";
 
-        assertThat(messageFromSpineService).isEqualTo("Spine mock service is working!");
+        given()
+            .port(PORT)
+            .contentType(APPLICATION_JSON_VALUE)
+            .body(sampleJson)
+            .when()
+            .post(SETUP_ENDPOINT)
+            .then()
+            .statusCode(ACCEPTED.value()).extract();
+
+        String dataFromSpine = spineClient.getSampleEndpoint();
+
+        assertThat(dataFromSpine).isEqualTo(sampleJson);
     }
 }
