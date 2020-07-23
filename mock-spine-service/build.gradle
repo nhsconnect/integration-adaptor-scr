@@ -31,11 +31,7 @@ task staticCodeAnalysis(type: GradleBuild) {
     tasks = [
             'clean',
             'checkstyleMain',
-            'checkstyleTest',
-            'checkstyleIntegrationTest',
             'spotbugsMain',
-            'spotbugsTest',
-            'spotbugsIntegrationTest',
     ]
 }
 
