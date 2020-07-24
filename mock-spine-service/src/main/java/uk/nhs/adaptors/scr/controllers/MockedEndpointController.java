@@ -25,10 +25,10 @@ public class MockedEndpointController {
 
     @RequestMapping("/*")
     public ResponseEntity get(HttpServletRequest request) {
-        EndpointMockData setupEndpointRequest = storage.get(request.getMethod(), request.getRequestURI());
-        if (setupEndpointRequest == null) {
+        EndpointMockData endpointMockData = storage.get(request.getMethod(), request.getRequestURI());
+        if (endpointMockData == null) {
             throw new ResponseStatusException(NOT_FOUND);
         }
-        return new ResponseEntity(setupEndpointRequest.getResponseContent(), HttpStatus.valueOf(setupEndpointRequest.getHttpStatusCode()));
+        return new ResponseEntity(endpointMockData.getResponseContent(), HttpStatus.valueOf(endpointMockData.getHttpStatusCode()));
     }
 }

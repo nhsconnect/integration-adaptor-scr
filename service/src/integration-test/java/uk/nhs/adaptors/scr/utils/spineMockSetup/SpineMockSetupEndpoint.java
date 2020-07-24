@@ -12,23 +12,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.nhs.adaptors.scr.utils.EndpointMockData;
 import uk.nhs.adaptors.scr.utils.spineMockSetup.interfaces.SpineMockSetupForHttpMethod;
-import uk.nhs.adaptors.scr.utils.spineMockSetup.interfaces.SpineMockSetupForResponseContent;
-import uk.nhs.adaptors.scr.utils.spineMockSetup.interfaces.SpineMockSetupSetupEndpoint;
+import uk.nhs.adaptors.scr.utils.spineMockSetup.interfaces.SpineMockSetupWithResponseContent;
 import uk.nhs.adaptors.scr.utils.spineMockSetup.interfaces.SpineMockSetupWithHttpStatusCode;
 
 @Component
-public class SpineMockSetup {
+public class SpineMockSetupEndpoint {
     private static final String SETUP_ENDPOINT = "/setup";
     private static final int PORT = 8081;
 
-    private static class Builder implements SpineMockSetupWithHttpStatusCode, SpineMockSetupForHttpMethod,
-        SpineMockSetupForResponseContent, SpineMockSetupSetupEndpoint {
+    public SpineMockSetupForHttpMethod forUrl(String url) {
+        Builder builder = new Builder();
+        builder.url = url;
+        return builder;
+    }
+
+    private static class Builder implements SpineMockSetupWithHttpStatusCode, SpineMockSetupForHttpMethod, SpineMockSetupWithResponseContent {
         private String url;
         private String httpMethod;
         private Integer httpStatusCode;
         private String responseContent;
 
-        public void setupEndpoint() {
+        @Override
+        public SpineMockSetupWithHttpStatusCode forHttpMethod(String httpMethod) {
+            this.httpMethod = httpMethod;
+            return this;
+        }
+
+        @Override
+        public SpineMockSetupWithResponseContent withHttpStatusCode(Integer httpStatusCode) {
+            this.httpStatusCode = httpStatusCode;
+            return this;
+        }
+
+        @Override
+        public void withResponseContent(String responseContent) {
+            this.responseContent = responseContent;
+            setupEndpoint();
+        }
+
+        private void setupEndpoint() {
             EndpointMockData endpointMockData = new EndpointMockData();
             endpointMockData.setUrl(url);
             endpointMockData.setHttpMethod(httpMethod);
@@ -50,29 +72,5 @@ public class SpineMockSetup {
                 // skip
             }
         }
-
-        @Override
-        public SpineMockSetupWithHttpStatusCode forHttpMethod(String httpMethod) {
-            this.httpMethod = httpMethod;
-            return this;
-        }
-
-        @Override
-        public SpineMockSetupForResponseContent withHttpStatusCode(Integer httpStatusCode) {
-            this.httpStatusCode = httpStatusCode;
-            return this;
-        }
-
-        @Override
-        public SpineMockSetupSetupEndpoint withResponseContent(String responseContent) {
-            this.responseContent = responseContent;
-            return this;
-        }
-    }
-
-    public SpineMockSetupForHttpMethod forUrl(String url) {
-        Builder builder = new Builder();
-        builder.url = url;
-        return builder;
     }
 }

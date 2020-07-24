@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.nhs.adaptors.scr.clients.SpineClient;
-import uk.nhs.adaptors.scr.utils.spineMockSetup.SpineMockSetup;
+import uk.nhs.adaptors.scr.utils.spineMockSetup.SpineMockSetupEndpoint;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -25,7 +25,7 @@ public class SpineMockServiceTest {
     private SpineClient spineClient;
 
     @Autowired
-    private SpineMockSetup spineMockSetup;
+    private SpineMockSetupEndpoint spineMockSetupEndpoint;
 
     @Test
     public void getHealthcheckShouldReturnOkStatus() {
@@ -41,12 +41,11 @@ public class SpineMockServiceTest {
     public void sampleEndpointShouldReturnMockedData() {
         String message = "It's working!";
 
-        spineMockSetup
+        spineMockSetupEndpoint
             .forUrl("/sample")
             .forHttpMethod("GET")
             .withHttpStatusCode(200)
-            .withResponseContent(message)
-            .setupEndpoint();
+            .withResponseContent(message);
 
         String dataFromSpine = spineClient.getSampleEndpoint();
 
