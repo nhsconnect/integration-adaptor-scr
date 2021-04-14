@@ -1,3 +1,6 @@
+# Important:
+This repository is no longer in use. SCR API is developed [here](https://github.com/NHSDigital/summary-care-record-api/)
+
 # integration-adaptor-scr
 National Integration Adaptors - Summary Care Record
 
